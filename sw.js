@@ -1,8 +1,15 @@
 // Bell Audio PWA Service Worker
+const CACHE_VERSION = '1.0.1';
 const CACHE_NAME = 'bell-audio-v1';
-const STATIC_CACHE = 'bell-audio-static-v1';
-const AUDIO_CACHE = 'bell-audio-audio-v1';
-const RUNTIME_CACHE = 'bell-audio-runtime-v1';
+const STATIC_CACHE = `bell-audio-static-v${CACHE_VERSION}`;
+const AUDIO_CACHE = `bell-audio-audio-v${CACHE_VERSION}`;
+const RUNTIME_CACHE = `bell-audio-runtime-v${CACHE_VERSION}`;
+
+// Cache size limits
+const CACHE_LIMITS = {
+  AUDIO: 50, // MB
+  RUNTIME: 20 // MB
+};
 
 // Assets to cache immediately
 const STATIC_ASSETS = [
@@ -109,12 +116,30 @@ async function handleAudioRequest(request) {
     if (networkResponse.ok) {
       // Cache audio files for offline use
       cache.put(request, networkResponse.clone());
+
+      // Manage cache size
+      manageCacheSize(AUDIO_CACHE, CACHE_LIMITS.AUDIO).catch(err =>
+        console.error('Cache management error:', err)
+      );
     }
 
     return networkResponse;
   } catch (error) {
     console.error('Audio request failed:', error);
-    return new Response('Audio unavailable offline', { status: 503 });
+
+    // Return user-friendly error
+    return new Response(
+      JSON.stringify({
+        error: 'Audio resource unavailable offline',
+        message: 'This audio file is not cached. Please connect to the internet to download it.',
+        offline: true
+      }),
+      {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }
 
@@ -147,7 +172,14 @@ async function handleNavigationRequest(request) {
     return networkResponse;
   } catch (error) {
     console.log('Navigation offline, serving cached page');
-    return caches.match('/index.html');
+    const cachedPage = await caches.match('/index.html');
+
+    if (cachedPage) {
+      return cachedPage;
+    }
+
+    // If no cache available, show offline page
+    return createOfflinePage();
   }
 }
 
@@ -160,6 +192,11 @@ async function handleRuntimeRequest(request) {
       const networkResponse = await fetch(request);
       if (networkResponse.ok) {
         cache.put(request, networkResponse.clone());
+
+        // Manage cache size
+        manageCacheSize(RUNTIME_CACHE, CACHE_LIMITS.RUNTIME).catch(err =>
+          console.error('Runtime cache management error:', err)
+        );
       }
       return networkResponse;
     } catch (networkError) {
@@ -199,6 +236,171 @@ function isStaticAsset(request) {
 function isNavigationRequest(request) {
   return request.mode === 'navigate' ||
          (request.method === 'GET' && request.headers.get('accept').includes('text/html'));
+}
+
+// Create offline error page with proper styling
+function createOfflinePage() {
+  return new Response(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Offline - Bell Audio</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          text-align: center;
+        }
+        .offline-container {
+          max-width: 500px;
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(20px);
+          border-radius: 20px;
+          padding: 40px;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .offline-icon {
+          font-size: 80px;
+          margin-bottom: 20px;
+        }
+        h1 {
+          font-size: 32px;
+          margin-bottom: 16px;
+          font-weight: 700;
+        }
+        p {
+          font-size: 16px;
+          line-height: 1.6;
+          margin-bottom: 24px;
+          opacity: 0.9;
+        }
+        .features {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          padding: 20px;
+          margin: 24px 0;
+          text-align: left;
+        }
+        .features h2 {
+          font-size: 18px;
+          margin-bottom: 12px;
+        }
+        .features ul {
+          list-style: none;
+          padding: 0;
+        }
+        .features li {
+          padding: 8px 0;
+          padding-left: 24px;
+          position: relative;
+        }
+        .features li:before {
+          content: "✓";
+          position: absolute;
+          left: 0;
+          color: #4ade80;
+          font-weight: bold;
+        }
+        button {
+          background: white;
+          color: #667eea;
+          border: none;
+          padding: 14px 32px;
+          font-size: 16px;
+          font-weight: 600;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+        button:active {
+          transform: translateY(0);
+        }
+      </style>
+    </head>
+    <body>
+      <div class="offline-container">
+        <div class="offline-icon">📡</div>
+        <h1>You're Offline</h1>
+        <p>No internet connection detected, but don't worry!</p>
+
+        <div class="features">
+          <h2>Available Offline:</h2>
+          <ul>
+            <li>Full audio synthesis engine</li>
+            <li>All frequency libraries</li>
+            <li>Meditation sequences</li>
+            <li>Binaural beat generation</li>
+            <li>Visual spectrum analyzer</li>
+          </ul>
+        </div>
+
+        <p>Bell Audio works completely offline. The core functionality is cached and ready to use.</p>
+
+        <button onclick="location.reload()">Try Again</button>
+      </div>
+    </body>
+    </html>
+  `, {
+    status: 200,
+    statusText: 'OK',
+    headers: {
+      'Content-Type': 'text/html',
+      'Cache-Control': 'no-cache'
+    }
+  });
+}
+
+// Cache size management
+async function manageCacheSize(cacheName, maxSizeMB) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+
+  let totalSize = 0;
+  const sizeMap = new Map();
+
+  // Calculate total cache size
+  for (const request of keys) {
+    const response = await cache.match(request);
+    if (response) {
+      const blob = await response.blob();
+      const size = blob.size;
+      totalSize += size;
+      sizeMap.set(request.url, size);
+    }
+  }
+
+  const maxBytes = maxSizeMB * 1024 * 1024;
+
+  // If over limit, remove oldest entries
+  if (totalSize > maxBytes) {
+    console.log(`Cache ${cacheName} over limit (${(totalSize / 1024 / 1024).toFixed(2)}MB), cleaning up...`);
+
+    const sortedEntries = Array.from(sizeMap.entries())
+      .sort((a, b) => b[1] - a[1]); // Sort by size descending
+
+    let removedSize = 0;
+    for (const [url, size] of sortedEntries) {
+      if (totalSize - removedSize <= maxBytes) break;
+
+      await cache.delete(url);
+      removedSize += size;
+      console.log(`Removed from cache: ${url}`);
+    }
+  }
 }
 
 // Background sync for audio session data
