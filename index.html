@@ -14,6 +14,17 @@
     <meta name="msapplication-TileColor" content="#6366f1">
     <meta name="msapplication-config" content="/browserconfig.xml">
 
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                   font-src 'self' https://fonts.gstatic.com;
+                   img-src 'self' data: blob:;
+                   media-src 'self' blob: data:;
+                   connect-src 'self';
+                   worker-src 'self';">
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
 
@@ -438,10 +449,7 @@
         .header h1 {
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 800;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #ffffff;
             margin-bottom: 8px;
             letter-spacing: -0.025em;
         }
@@ -560,6 +568,14 @@
 
         .modern-knob:active {
             transform: scale(0.98);
+        }
+
+        .modern-knob.dragging {
+            transform: scale(1.08);
+            box-shadow:
+                inset 0 2px 8px rgba(0, 0, 0, 0.4),
+                0 8px 30px rgba(0, 0, 0, 0.4),
+                var(--shadow-glow);
         }
 
         .control-value {
@@ -1457,10 +1473,206 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* ==================== MOBILE PWA OPTIMIZATIONS ==================== */
+
+        /* Ensure minimum touch target size of 44x44px for iOS */
+        @media (max-width: 640px) {
+            /* Touch targets */
+            .freq-button {
+                min-width: 44px;
+                min-height: 44px;
+                padding: 12px 8px;
+                -webkit-tap-highlight-color: rgba(99, 102, 241, 0.2);
+            }
+
+            .transport-button {
+                width: 56px;
+                height: 56px;
+                min-width: 44px;
+                min-height: 44px;
+                font-size: 20px;
+                -webkit-tap-highlight-color: rgba(99, 102, 241, 0.2);
+            }
+
+            .toggle-switch {
+                min-width: 44px;
+                min-height: 28px;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .modern-knob {
+                min-width: 44px;
+                min-height: 44px;
+                touch-action: none; /* Prevent scrolling while dragging knob */
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            /* Improve tap feedback */
+            button:active,
+            .freq-button:active,
+            .transport-button:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
+            }
+
+            /* Optimize text sizes for mobile */
+            .freq-value {
+                font-size: 0.9rem;
+            }
+
+            .freq-label {
+                font-size: 0.65rem;
+            }
+
+            /* Mobile-specific layout adjustments */
+            .app-container {
+                padding: 0;
+                gap: 16px;
+            }
+
+            .header {
+                padding: 60px 12px 24px 12px;
+            }
+
+            /* Stack controls vertically on very small screens */
+            .control-section {
+                padding: 16px;
+            }
+
+            .knob-container,
+            .slider-controls {
+                gap: 12px;
+            }
+
+            /* Improve scrolling performance */
+            .frequency-grid {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+
+            .sequence-items {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Prevent text selection on interactive elements */
+            .freq-button,
+            .transport-button,
+            .modern-knob,
+            .toggle-switch {
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            /* iOS safe area insets */
+            .header-controls {
+                top: max(16px, env(safe-area-inset-top));
+                right: max(16px, env(safe-area-inset-right));
+            }
+
+            body {
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            }
+        }
+
+        /* Portrait mode optimizations */
+        @media (max-width: 640px) and (orientation: portrait) {
+            .frequency-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+
+            .knob-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Landscape mode optimizations */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .frequency-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+
+            .header {
+                padding: 20px 16px;
+            }
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .freq-button {
+                border-width: 2px;
+            }
+
+            .transport-button {
+                border-width: 2px;
+            }
+
+            button:focus,
+            .freq-button:focus,
+            .transport-button:focus {
+                outline: 3px solid var(--accent-primary);
+                outline-offset: 2px;
+            }
+        }
+
+        /* Dark mode preference (system level) */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bg-primary: #0a0a0b;
+                --bg-secondary: #111113;
+                --text-primary: #ffffff;
+            }
+        }
+
+        /* Battery saving: reduce animations when battery is low */
+        @media (prefers-reduced-data: reduce) {
+            .freq-button::before,
+            .glass-bg {
+                backdrop-filter: none;
+            }
+        }
+
+        /* Focus visible for keyboard navigation */
+        :focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        /* Skip to main content link for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--accent-primary);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            z-index: 10000;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* ==================== END MOBILE PWA OPTIMIZATIONS ==================== */
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="app-container" id="main-content" role="main">
         <header class="header">
             <div class="header-controls">
                 <div class="control-row">
@@ -1667,10 +1879,10 @@
         </div>
 
         <div class="transport-section">
-            <button class="transport-button" id="playBtn" title="Play">▶</button>
-            <button class="transport-button" id="pauseBtn" title="Pause">⏸</button>
-            <button class="transport-button" id="stopBtn" title="Stop">⏹</button>
-            <button class="transport-button" id="sequencePlayBtn" title="Play Sequence">🎼</button>
+            <button class="transport-button" id="playBtn" title="Play" aria-label="Play audio" role="button" tabindex="0">▶</button>
+            <button class="transport-button" id="pauseBtn" title="Pause" aria-label="Pause audio" role="button" tabindex="0">⏸</button>
+            <button class="transport-button" id="stopBtn" title="Stop" aria-label="Stop all audio" role="button" tabindex="0">⏹</button>
+            <button class="transport-button" id="sequencePlayBtn" title="Play Sequence" aria-label="Play sequence" role="button" tabindex="0">🎼</button>
         </div>
 
         <div class="glass-panel visualization-section">
@@ -1727,6 +1939,798 @@
     </div>
 
     <script>
+        // ==================== PWA ENHANCEMENT MANAGERS ====================
+
+        // Error Tracking and Reporting
+        class ErrorTracker {
+            constructor() {
+                this.errors = [];
+                this.maxErrors = 100;
+                this.setupHandlers();
+            }
+
+            setupHandlers() {
+                window.addEventListener('error', (event) => {
+                    this.trackError({
+                        type: 'error',
+                        message: event.message,
+                        filename: event.filename,
+                        lineno: event.lineno,
+                        colno: event.colno,
+                        stack: event.error?.stack,
+                        timestamp: Date.now(),
+                        userAgent: navigator.userAgent
+                    });
+                });
+
+                window.addEventListener('unhandledrejection', (event) => {
+                    this.trackError({
+                        type: 'unhandledRejection',
+                        reason: event.reason?.toString(),
+                        stack: event.reason?.stack,
+                        timestamp: Date.now(),
+                        userAgent: navigator.userAgent
+                    });
+                });
+            }
+
+            trackError(error) {
+                this.errors.push(error);
+
+                // Keep only last N errors
+                if (this.errors.length > this.maxErrors) {
+                    this.errors.shift();
+                }
+
+                console.error('📊 Error tracked:', error);
+
+                // In production, send to error tracking service
+                // this.sendToErrorService(error);
+            }
+
+            getErrors() {
+                return this.errors;
+            }
+
+            clearErrors() {
+                this.errors = [];
+            }
+        }
+
+        // Performance Monitoring
+        class PerformanceMonitor {
+            constructor() {
+                this.metrics = {
+                    audioLatency: [],
+                    frameRate: [],
+                    memoryUsage: [],
+                    longTasks: []
+                };
+                this.setupObservers();
+                this.startMemoryMonitoring();
+            }
+
+            setupObservers() {
+                // Performance Observer for long tasks
+                if ('PerformanceObserver' in window) {
+                    try {
+                        const observer = new PerformanceObserver((list) => {
+                            for (const entry of list.getEntries()) {
+                                if (entry.duration > 50) {
+                                    console.warn('⚠️  Long task detected:', entry.duration.toFixed(2) + 'ms');
+                                    this.metrics.longTasks.push({
+                                        duration: entry.duration,
+                                        timestamp: Date.now()
+                                    });
+                                }
+                            }
+                        });
+                        observer.observe({ entryTypes: ['longtask'] });
+                    } catch (e) {
+                        console.log('Long task monitoring not supported');
+                    }
+                }
+
+                // FPS monitoring
+                let lastTime = performance.now();
+                let frames = 0;
+                const measureFPS = (currentTime) => {
+                    frames++;
+                    if (currentTime >= lastTime + 1000) {
+                        const fps = Math.round((frames * 1000) / (currentTime - lastTime));
+                        this.metrics.frameRate.push({
+                            fps: fps,
+                            timestamp: Date.now()
+                        });
+
+                        // Keep only last 60 seconds of FPS data
+                        if (this.metrics.frameRate.length > 60) {
+                            this.metrics.frameRate.shift();
+                        }
+
+                        frames = 0;
+                        lastTime = currentTime;
+                    }
+                    requestAnimationFrame(measureFPS);
+                };
+                requestAnimationFrame(measureFPS);
+            }
+
+            startMemoryMonitoring() {
+                // Memory monitoring (Chrome only)
+                if (performance.memory) {
+                    setInterval(() => {
+                        const memoryInfo = {
+                            usedJSHeapSize: (performance.memory.usedJSHeapSize / 1048576).toFixed(2),
+                            totalJSHeapSize: (performance.memory.totalJSHeapSize / 1048576).toFixed(2),
+                            limit: (performance.memory.jsHeapSizeLimit / 1048576).toFixed(2),
+                            timestamp: Date.now()
+                        };
+                        this.metrics.memoryUsage.push(memoryInfo);
+
+                        // Keep only last 5 minutes of memory data
+                        if (this.metrics.memoryUsage.length > 60) {
+                            this.metrics.memoryUsage.shift();
+                        }
+
+                        // Warn if memory usage is high
+                        const usagePercent = (performance.memory.usedJSHeapSize / performance.memory.jsHeapSizeLimit) * 100;
+                        if (usagePercent > 80) {
+                            console.warn('⚠️  High memory usage:', usagePercent.toFixed(1) + '%');
+                        }
+                    }, 5000);
+                }
+            }
+
+            measureAudioLatency(startTime) {
+                const latency = performance.now() - startTime;
+                this.metrics.audioLatency.push({
+                    latency: latency,
+                    timestamp: Date.now()
+                });
+
+                // Keep only last 100 measurements
+                if (this.metrics.audioLatency.length > 100) {
+                    this.metrics.audioLatency.shift();
+                }
+
+                return latency;
+            }
+
+            getMetrics() {
+                return this.metrics;
+            }
+
+            getAverageLatency() {
+                if (this.metrics.audioLatency.length === 0) return 0;
+                const sum = this.metrics.audioLatency.reduce((acc, m) => acc + m.latency, 0);
+                return sum / this.metrics.audioLatency.length;
+            }
+
+            getAverageFPS() {
+                if (this.metrics.frameRate.length === 0) return 0;
+                const sum = this.metrics.frameRate.reduce((acc, m) => acc + m.fps, 0);
+                return sum / this.metrics.frameRate.length;
+            }
+        }
+
+        // Touch Gesture Handler
+        class TouchGestureHandler {
+            constructor() {
+                this.startX = 0;
+                this.startY = 0;
+                this.startTime = 0;
+                this.isLongPress = false;
+                this.longPressTimer = null;
+                this.swipeThreshold = 50;
+                this.longPressDelay = 500;
+                this.setupTouchHandlers();
+            }
+
+            setupTouchHandlers() {
+                document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+                document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+                document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
+            }
+
+            handleTouchStart(e) {
+                if (e.touches.length > 0) {
+                    this.startX = e.touches[0].clientX;
+                    this.startY = e.touches[0].clientY;
+                    this.startTime = Date.now();
+                    this.isLongPress = false;
+
+                    // Haptic feedback
+                    if (navigator.vibrate) {
+                        navigator.vibrate(10);
+                    }
+
+                    // Start long press detection
+                    this.longPressTimer = setTimeout(() => {
+                        this.isLongPress = true;
+                        this.handleLongPress(e);
+                    }, this.longPressDelay);
+                }
+            }
+
+            handleTouchMove(e) {
+                // Cancel long press if moved
+                if (this.longPressTimer) {
+                    const deltaX = Math.abs(e.touches[0].clientX - this.startX);
+                    const deltaY = Math.abs(e.touches[0].clientY - this.startY);
+
+                    if (deltaX > 10 || deltaY > 10) {
+                        clearTimeout(this.longPressTimer);
+                        this.longPressTimer = null;
+                    }
+                }
+            }
+
+            handleTouchEnd(e) {
+                // Clear long press timer
+                if (this.longPressTimer) {
+                    clearTimeout(this.longPressTimer);
+                    this.longPressTimer = null;
+                }
+
+                if (this.isLongPress) {
+                    return; // Already handled
+                }
+
+                const deltaX = e.changedTouches[0].clientX - this.startX;
+                const deltaY = e.changedTouches[0].clientY - this.startY;
+                const deltaTime = Date.now() - this.startTime;
+
+                // Detect swipe gestures
+                if (Math.abs(deltaX) > this.swipeThreshold && deltaTime < 300) {
+                    if (deltaX > 0) {
+                        this.handleSwipeRight(e);
+                    } else {
+                        this.handleSwipeLeft(e);
+                    }
+                } else if (Math.abs(deltaY) > this.swipeThreshold && deltaTime < 300) {
+                    if (deltaY > 0) {
+                        this.handleSwipeDown(e);
+                    } else {
+                        this.handleSwipeUp(e);
+                    }
+                }
+            }
+
+            handleSwipeLeft(e) {
+                console.log('👈 Swipe left detected');
+                // Dispatch custom event
+                window.dispatchEvent(new CustomEvent('swipe-left', { detail: e }));
+            }
+
+            handleSwipeRight(e) {
+                console.log('👉 Swipe right detected');
+                window.dispatchEvent(new CustomEvent('swipe-right', { detail: e }));
+            }
+
+            handleSwipeUp(e) {
+                console.log('👆 Swipe up detected');
+                window.dispatchEvent(new CustomEvent('swipe-up', { detail: e }));
+            }
+
+            handleSwipeDown(e) {
+                console.log('👇 Swipe down detected');
+                window.dispatchEvent(new CustomEvent('swipe-down', { detail: e }));
+            }
+
+            handleLongPress(e) {
+                console.log('👆⏱️ Long press detected');
+
+                // Haptic feedback for long press
+                if (navigator.vibrate) {
+                    navigator.vibrate([20, 10, 20]);
+                }
+
+                window.dispatchEvent(new CustomEvent('long-press', { detail: e }));
+            }
+        }
+
+        // Media Session Manager for lock screen controls
+        class MediaSessionManager {
+            constructor(audioEngine) {
+                this.audioEngine = audioEngine;
+                this.isSetup = false;
+            }
+
+            setup() {
+                if (!('mediaSession' in navigator)) {
+                    console.log('Media Session API not supported');
+                    return;
+                }
+
+                this.isSetup = true;
+
+                // Set metadata
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: 'Bell Audio Meditation',
+                    artist: 'Healing Frequencies',
+                    album: 'Meditation Session',
+                    artwork: [
+                        { src: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
+                        { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+                        { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+
+                // Set action handlers
+                navigator.mediaSession.setActionHandler('play', () => {
+                    console.log('🎵 Media Session: Play');
+                    this.audioEngine.play();
+                });
+
+                navigator.mediaSession.setActionHandler('pause', () => {
+                    console.log('⏸️ Media Session: Pause');
+                    this.audioEngine.stop();
+                });
+
+                navigator.mediaSession.setActionHandler('stop', () => {
+                    console.log('⏹️ Media Session: Stop');
+                    this.audioEngine.stop();
+                });
+
+                // Optional: seek controls
+                try {
+                    navigator.mediaSession.setActionHandler('seekbackward', () => {
+                        console.log('⏪ Media Session: Seek backward');
+                    });
+
+                    navigator.mediaSession.setActionHandler('seekforward', () => {
+                        console.log('⏩ Media Session: Seek forward');
+                    });
+                } catch (e) {
+                    console.log('Seek actions not supported');
+                }
+
+                console.log('✅ Media Session API configured');
+            }
+
+            updateMetadata(title, artist) {
+                if (!this.isSetup || !('mediaSession' in navigator)) return;
+
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title || 'Bell Audio Meditation',
+                    artist: artist || 'Healing Frequencies',
+                    album: 'Meditation Session',
+                    artwork: [
+                        { src: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
+                        { src: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+                        { src: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+            }
+
+            setPlaybackState(state) {
+                if (!this.isSetup || !('mediaSession' in navigator)) return;
+
+                navigator.mediaSession.playbackState = state; // 'playing', 'paused', 'none'
+                console.log('📻 Media Session state:', state);
+            }
+        }
+
+        // Wake Lock Manager to prevent screen sleep
+        class WakeLockManager {
+            constructor() {
+                this.wakeLock = null;
+                this.isSupported = 'wakeLock' in navigator;
+            }
+
+            async request() {
+                if (!this.isSupported) {
+                    console.log('Wake Lock API not supported');
+                    return false;
+                }
+
+                try {
+                    this.wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('🔒 Wake Lock acquired');
+
+                    this.wakeLock.addEventListener('release', () => {
+                        console.log('🔓 Wake Lock released');
+                    });
+
+                    // Handle visibility change
+                    document.addEventListener('visibilitychange', async () => {
+                        if (this.wakeLock !== null && document.visibilityState === 'visible') {
+                            await this.request();
+                        }
+                    });
+
+                    return true;
+                } catch (err) {
+                    console.error('Wake Lock error:', err);
+                    return false;
+                }
+            }
+
+            async release() {
+                if (this.wakeLock) {
+                    try {
+                        await this.wakeLock.release();
+                        this.wakeLock = null;
+                        console.log('🔓 Wake Lock released manually');
+                    } catch (err) {
+                        console.error('Wake Lock release error:', err);
+                    }
+                }
+            }
+
+            get isActive() {
+                return this.wakeLock !== null;
+            }
+        }
+
+        // Page Visibility Manager
+        class VisibilityManager {
+            constructor(audioEngine) {
+                this.audioEngine = audioEngine;
+                this.setupVisibilityHandlers();
+            }
+
+            setupVisibilityHandlers() {
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.handleBackground();
+                    } else {
+                        this.handleForeground();
+                    }
+                });
+            }
+
+            handleBackground() {
+                console.log('📱 App backgrounded');
+
+                // Ensure audio context stays active
+                if (this.audioEngine.context && this.audioEngine.context.state === 'running') {
+                    console.log('🎵 Audio continuing in background');
+                }
+            }
+
+            handleForeground() {
+                console.log('📱 App foregrounded');
+
+                // Resume if needed
+                if (this.audioEngine.context && this.audioEngine.context.state === 'suspended') {
+                    this.audioEngine.context.resume().then(() => {
+                        console.log('🎵 Audio context resumed');
+                    });
+                }
+            }
+        }
+
+        // IndexedDB Session Persistence
+        class SessionPersistence {
+            constructor() {
+                this.db = null;
+                this.dbName = 'BellAudioDB';
+                this.version = 1;
+            }
+
+            async init() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, this.version);
+
+                    request.onerror = () => {
+                        console.error('IndexedDB error:', request.error);
+                        reject(request.error);
+                    };
+
+                    request.onsuccess = () => {
+                        this.db = request.result;
+                        console.log('✅ IndexedDB initialized');
+                        resolve();
+                    };
+
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+
+                        if (!db.objectStoreNames.contains('sessions')) {
+                            const sessionStore = db.createObjectStore('sessions', { keyPath: 'id', autoIncrement: true });
+                            sessionStore.createIndex('timestamp', 'timestamp', { unique: false });
+                        }
+
+                        if (!db.objectStoreNames.contains('sequences')) {
+                            const sequenceStore = db.createObjectStore('sequences', { keyPath: 'id', autoIncrement: true });
+                            sequenceStore.createIndex('timestamp', 'timestamp', { unique: false });
+                        }
+
+                        console.log('📦 IndexedDB stores created');
+                    };
+                });
+            }
+
+            async saveSession(sessionData) {
+                if (!this.db) await this.init();
+
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['sessions'], 'readwrite');
+                    const store = transaction.objectStore('sessions');
+                    const request = store.add({
+                        ...sessionData,
+                        timestamp: Date.now()
+                    });
+
+                    request.onsuccess = () => {
+                        console.log('💾 Session saved to IndexedDB');
+                        resolve(request.result);
+                    };
+
+                    request.onerror = () => {
+                        console.error('Failed to save session:', request.error);
+                        reject(request.error);
+                    };
+                });
+            }
+
+            async getLastSession() {
+                if (!this.db) await this.init();
+
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['sessions'], 'readonly');
+                    const store = transaction.objectStore('sessions');
+                    const request = store.getAll();
+
+                    request.onsuccess = () => {
+                        const sessions = request.result;
+                        if (sessions.length > 0) {
+                            resolve(sessions[sessions.length - 1]);
+                        } else {
+                            resolve(null);
+                        }
+                    };
+
+                    request.onerror = () => {
+                        console.error('Failed to get session:', request.error);
+                        reject(request.error);
+                    };
+                });
+            }
+
+            async saveSequence(sequenceData) {
+                if (!this.db) await this.init();
+
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['sequences'], 'readwrite');
+                    const store = transaction.objectStore('sequences');
+                    const request = store.add({
+                        ...sequenceData,
+                        timestamp: Date.now()
+                    });
+
+                    request.onsuccess = () => {
+                        console.log('💾 Sequence saved to IndexedDB');
+                        resolve(request.result);
+                    };
+
+                    request.onerror = () => {
+                        console.error('Failed to save sequence:', request.error);
+                        reject(request.error);
+                    };
+                });
+            }
+
+            async getAllSequences() {
+                if (!this.db) await this.init();
+
+                return new Promise((resolve, reject) => {
+                    const transaction = this.db.transaction(['sequences'], 'readonly');
+                    const store = transaction.objectStore('sequences');
+                    const request = store.getAll();
+
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+
+        // Battery Optimization Manager
+        class BatteryOptimizer {
+            constructor() {
+                this.batteryLevel = 1;
+                this.isCharging = true;
+                this.isLowPowerMode = false;
+                this.init();
+            }
+
+            async init() {
+                if ('getBattery' in navigator) {
+                    try {
+                        const battery = await navigator.getBattery();
+
+                        this.batteryLevel = battery.level;
+                        this.isCharging = battery.charging;
+                        this.checkBatteryStatus();
+
+                        battery.addEventListener('levelchange', () => {
+                            this.batteryLevel = battery.level;
+                            this.checkBatteryStatus();
+                        });
+
+                        battery.addEventListener('chargingchange', () => {
+                            this.isCharging = battery.charging;
+                            this.checkBatteryStatus();
+                        });
+
+                        console.log('🔋 Battery monitoring initialized');
+                    } catch (err) {
+                        console.log('Battery API not supported:', err);
+                    }
+                } else {
+                    console.log('Battery API not available');
+                }
+            }
+
+            checkBatteryStatus() {
+                const wasLowPowerMode = this.isLowPowerMode;
+                this.isLowPowerMode = !this.isCharging && this.batteryLevel < 0.2;
+
+                if (this.isLowPowerMode && !wasLowPowerMode) {
+                    console.log('🔋⚠️ Low battery detected, enabling power saving mode');
+                    this.enablePowerSaving();
+                } else if (!this.isLowPowerMode && wasLowPowerMode) {
+                    console.log('🔋✅ Battery level restored, disabling power saving mode');
+                    this.disablePowerSaving();
+                }
+            }
+
+            enablePowerSaving() {
+                // Reduce visualization quality
+                window.dispatchEvent(new CustomEvent('battery-low', {
+                    detail: { level: this.batteryLevel }
+                }));
+            }
+
+            disablePowerSaving() {
+                window.dispatchEvent(new CustomEvent('battery-normal', {
+                    detail: { level: this.batteryLevel }
+                }));
+            }
+
+            shouldReduceQuality() {
+                return this.isLowPowerMode;
+            }
+        }
+
+        // Initialize all PWA managers
+        const errorTracker = new ErrorTracker();
+        const performanceMonitor = new PerformanceMonitor();
+        const touchGestureHandler = new TouchGestureHandler();
+        const sessionPersistence = new SessionPersistence();
+        const batteryOptimizer = new BatteryOptimizer();
+
+        // Initialize IndexedDB
+        sessionPersistence.init().catch(err => console.error('Failed to initialize IndexedDB:', err));
+
+        // Keyboard Navigation Handler
+        class KeyboardNavigationManager {
+            constructor() {
+                this.setupKeyboardHandlers();
+            }
+
+            setupKeyboardHandlers() {
+                document.addEventListener('keydown', (e) => {
+                    // Prevent default for specific keys
+                    if (this.handleKeyPress(e)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            handleKeyPress(e) {
+                // Don't intercept if user is typing in an input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return false;
+                }
+
+                switch (e.key.toLowerCase()) {
+                    case ' ':
+                    case 'spacebar':
+                        // Toggle play/pause
+                        if (window.bellEngine) {
+                            const playBtn = document.getElementById('playBtn');
+                            if (playBtn) playBtn.click();
+                        }
+                        return true;
+
+                    case 'escape':
+                    case 'esc':
+                        // Stop all
+                        if (window.bellEngine) {
+                            bellEngine.stop();
+                        }
+                        return true;
+
+                    case 's':
+                        if (e.ctrlKey || e.metaKey) {
+                            // Save sequence (Ctrl+S or Cmd+S)
+                            this.saveCurrentSequence();
+                            return true;
+                        }
+                        break;
+
+                    case 'enter':
+                        // Activate focused element
+                        if (document.activeElement && document.activeElement.classList.contains('freq-button')) {
+                            document.activeElement.click();
+                            return true;
+                        }
+                        break;
+
+                    case 'arrowup':
+                    case 'arrowdown':
+                        // Adjust master volume
+                        if (window.bellEngine && bellEngine.masterGain) {
+                            const delta = e.key === 'arrowup' ? 0.05 : -0.05;
+                            const newVolume = Math.max(0, Math.min(1, bellEngine.masterGain.gain.value + delta));
+                            bellEngine.masterGain.gain.value = newVolume;
+                            this.announceToScreenReader(`Volume ${Math.round(newVolume * 100)}%`);
+                            return true;
+                        }
+                        break;
+
+                    case '?':
+                        // Show keyboard shortcuts help
+                        this.showKeyboardHelp();
+                        return true;
+                }
+
+                return false;
+            }
+
+            saveCurrentSequence() {
+                if (window.sequencer && sequencer.sequence.length > 0) {
+                    sessionPersistence.saveSequence({
+                        sequence: sequencer.sequence,
+                        name: `Sequence ${new Date().toLocaleString()}`
+                    });
+                    this.announceToScreenReader('Sequence saved');
+                }
+            }
+
+            showKeyboardHelp() {
+                const helpText = `
+Keyboard Shortcuts:
+• Space: Play/Pause
+• Escape: Stop all audio
+• Arrow Up/Down: Adjust volume
+• Enter: Activate focused button
+• Ctrl+S/Cmd+S: Save sequence
+• ?: Show this help
+                `.trim();
+
+                alert(helpText);
+            }
+
+            announceToScreenReader(message) {
+                const announcement = document.getElementById('sr-announcements');
+                if (announcement) {
+                    announcement.textContent = message;
+                }
+            }
+        }
+
+        // Initialize keyboard navigation
+        const keyboardNav = new KeyboardNavigationManager();
+
+        // Add live region for screen reader announcements
+        const srAnnouncements = document.createElement('div');
+        srAnnouncements.id = 'sr-announcements';
+        srAnnouncements.setAttribute('role', 'status');
+        srAnnouncements.setAttribute('aria-live', 'polite');
+        srAnnouncements.setAttribute('aria-atomic', 'true');
+        srAnnouncements.style.position = 'absolute';
+        srAnnouncements.style.left = '-10000px';
+        srAnnouncements.style.width = '1px';
+        srAnnouncements.style.height = '1px';
+        srAnnouncements.style.overflow = 'hidden';
+        document.body.appendChild(srAnnouncements);
+
+        // ==================== END PWA ENHANCEMENT MANAGERS ====================
+
         class SequenceItem {
             constructor(frequency, label, duration = 5, resonanceMode = 'single') {
                 this.id = Math.random().toString(36).substr(2, 9);
@@ -2881,6 +3885,11 @@
                 this.currentViz = 'spectrum';
                 this.vizData = null;
 
+                // PWA Managers
+                this.mediaSession = new MediaSessionManager(this);
+                this.wakeLock = new WakeLockManager();
+                this.visibilityManager = new VisibilityManager(this);
+
                 // Parameters
                 this.params = {
                     // Bell parameters
@@ -2949,6 +3958,9 @@
 
                 this.isInitialized = true;
                 this.updateSystemStatus('audioEngine', 'active');
+
+                // Setup Media Session API for lock screen controls
+                this.mediaSession.setup();
             }
 
             createRoomImpulse() {
@@ -2977,7 +3989,7 @@
 
             initKnobControls() {
                 document.querySelectorAll('.modern-knob').forEach(knob => {
-                    let isMouseDown = false;
+                    let isDragging = false;
                     let startY = 0;
                     let startValue = 0;
 
@@ -2990,18 +4002,9 @@
                     const rotation = ((currentValue - min) / (max - min)) * 270 - 135;
                     knob.style.transform = `rotate(${rotation}deg)`;
 
-                    knob.addEventListener('mousedown', (e) => {
-                        isMouseDown = true;
-                        startY = e.clientY;
-                        startValue = this.params[param] || currentValue;
-                        document.body.style.cursor = 'ns-resize';
-                        e.preventDefault();
-                    });
-
-                    document.addEventListener('mousemove', (e) => {
-                        if (!isMouseDown) return;
-
-                        const deltaY = startY - e.clientY;
+                    // Unified function to handle drag updates
+                    const updateKnob = (clientY) => {
+                        const deltaY = startY - clientY;
                         const sensitivity = (max - min) * 0.01;
                         let newValue = startValue + (deltaY * sensitivity);
 
@@ -3011,11 +4014,92 @@
 
                         const rotation = ((newValue - min) / (max - min)) * 270 - 135;
                         knob.style.transform = `rotate(${rotation}deg)`;
+                    };
+
+                    // Mouse events
+                    knob.addEventListener('mousedown', (e) => {
+                        isDragging = true;
+                        startY = e.clientY;
+                        startValue = this.params[param] || currentValue;
+                        document.body.style.cursor = 'ns-resize';
+                        knob.classList.add('dragging');
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
+                        updateKnob(e.clientY);
                     });
 
                     document.addEventListener('mouseup', () => {
-                        isMouseDown = false;
-                        document.body.style.cursor = 'default';
+                        if (isDragging) {
+                            isDragging = false;
+                            document.body.style.cursor = 'default';
+                            knob.classList.remove('dragging');
+                        }
+                    });
+
+                    // Touch events for mobile
+                    knob.addEventListener('touchstart', (e) => {
+                        isDragging = true;
+                        startY = e.touches[0].clientY;
+                        startValue = this.params[param] || currentValue;
+                        knob.classList.add('dragging');
+
+                        // Haptic feedback
+                        if (navigator.vibrate) {
+                            navigator.vibrate(10);
+                        }
+
+                        e.preventDefault();
+                    }, { passive: false });
+
+                    knob.addEventListener('touchmove', (e) => {
+                        if (!isDragging) return;
+
+                        updateKnob(e.touches[0].clientY);
+                        e.preventDefault();
+                    }, { passive: false });
+
+                    knob.addEventListener('touchend', () => {
+                        if (isDragging) {
+                            isDragging = false;
+                            knob.classList.remove('dragging');
+
+                            // Haptic feedback on release
+                            if (navigator.vibrate) {
+                                navigator.vibrate(5);
+                            }
+                        }
+                    });
+
+                    // Double-tap to reset to default (mobile-friendly)
+                    let lastTap = 0;
+                    knob.addEventListener('touchend', (e) => {
+                        const currentTime = new Date().getTime();
+                        const tapLength = currentTime - lastTap;
+
+                        if (tapLength < 300 && tapLength > 0) {
+                            // Double tap detected - reset to default value
+                            const defaultValue = parseFloat(knob.dataset.value);
+                            this.updateParameter(param, defaultValue);
+
+                            const rotation = ((defaultValue - min) / (max - min)) * 270 - 135;
+                            knob.style.transform = `rotate(${rotation}deg)`;
+
+                            // Haptic feedback for reset
+                            if (navigator.vibrate) {
+                                navigator.vibrate([10, 50, 10]);
+                            }
+
+                            // Visual feedback
+                            knob.style.transition = 'transform 0.3s ease';
+                            setTimeout(() => {
+                                knob.style.transition = '';
+                            }, 300);
+                        }
+
+                        lastTap = currentTime;
                     });
                 });
             }
@@ -3095,6 +4179,17 @@
 
             async playAdvancedBell(frequency, binauralPattern = null) {
                 await this.init();
+
+                // Request wake lock to prevent screen sleep
+                if (!this.wakeLock.isActive) {
+                    await this.wakeLock.request();
+                }
+
+                // Update media session state
+                this.mediaSession.setPlaybackState('playing');
+
+                // Measure audio latency
+                const startTime = performance.now();
 
                 if (this.activeFrequencies.has(frequency)) {
                     this.stopFrequency(frequency);
@@ -3497,6 +4592,12 @@
 
                 this.updateFrequencyCount();
                 this.updateSystemStatus('synthesis', 'idle');
+
+                // Release wake lock when all audio stops
+                if (this.activeFrequencies.size === 0) {
+                    this.wakeLock.release();
+                    this.mediaSession.setPlaybackState('paused');
+                }
             }
 
             updateFrequencyCount() {
