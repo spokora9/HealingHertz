@@ -573,6 +573,14 @@
             transform: scale(0.98);
         }
 
+        .modern-knob.dragging {
+            transform: scale(1.08);
+            box-shadow:
+                inset 0 2px 8px rgba(0, 0, 0, 0.4),
+                0 8px 30px rgba(0, 0, 0, 0.4),
+                var(--shadow-glow);
+        }
+
         .control-value {
             font-size: 0.75rem;
             font-weight: 600;
@@ -1499,7 +1507,9 @@
             .modern-knob {
                 min-width: 44px;
                 min-height: 44px;
-                touch-action: pan-y; /* Allow vertical scrolling while dragging */
+                touch-action: none; /* Prevent scrolling while dragging knob */
+                -webkit-user-select: none;
+                user-select: none;
             }
 
             /* Improve tap feedback */
@@ -3982,7 +3992,7 @@ Keyboard Shortcuts:
 
             initKnobControls() {
                 document.querySelectorAll('.modern-knob').forEach(knob => {
-                    let isMouseDown = false;
+                    let isDragging = false;
                     let startY = 0;
                     let startValue = 0;
 
@@ -3995,18 +4005,9 @@ Keyboard Shortcuts:
                     const rotation = ((currentValue - min) / (max - min)) * 270 - 135;
                     knob.style.transform = `rotate(${rotation}deg)`;
 
-                    knob.addEventListener('mousedown', (e) => {
-                        isMouseDown = true;
-                        startY = e.clientY;
-                        startValue = this.params[param] || currentValue;
-                        document.body.style.cursor = 'ns-resize';
-                        e.preventDefault();
-                    });
-
-                    document.addEventListener('mousemove', (e) => {
-                        if (!isMouseDown) return;
-
-                        const deltaY = startY - e.clientY;
+                    // Unified function to handle drag updates
+                    const updateKnob = (clientY) => {
+                        const deltaY = startY - clientY;
                         const sensitivity = (max - min) * 0.01;
                         let newValue = startValue + (deltaY * sensitivity);
 
@@ -4016,11 +4017,92 @@ Keyboard Shortcuts:
 
                         const rotation = ((newValue - min) / (max - min)) * 270 - 135;
                         knob.style.transform = `rotate(${rotation}deg)`;
+                    };
+
+                    // Mouse events
+                    knob.addEventListener('mousedown', (e) => {
+                        isDragging = true;
+                        startY = e.clientY;
+                        startValue = this.params[param] || currentValue;
+                        document.body.style.cursor = 'ns-resize';
+                        knob.classList.add('dragging');
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
+                        updateKnob(e.clientY);
                     });
 
                     document.addEventListener('mouseup', () => {
-                        isMouseDown = false;
-                        document.body.style.cursor = 'default';
+                        if (isDragging) {
+                            isDragging = false;
+                            document.body.style.cursor = 'default';
+                            knob.classList.remove('dragging');
+                        }
+                    });
+
+                    // Touch events for mobile
+                    knob.addEventListener('touchstart', (e) => {
+                        isDragging = true;
+                        startY = e.touches[0].clientY;
+                        startValue = this.params[param] || currentValue;
+                        knob.classList.add('dragging');
+
+                        // Haptic feedback
+                        if (navigator.vibrate) {
+                            navigator.vibrate(10);
+                        }
+
+                        e.preventDefault();
+                    }, { passive: false });
+
+                    knob.addEventListener('touchmove', (e) => {
+                        if (!isDragging) return;
+
+                        updateKnob(e.touches[0].clientY);
+                        e.preventDefault();
+                    }, { passive: false });
+
+                    knob.addEventListener('touchend', () => {
+                        if (isDragging) {
+                            isDragging = false;
+                            knob.classList.remove('dragging');
+
+                            // Haptic feedback on release
+                            if (navigator.vibrate) {
+                                navigator.vibrate(5);
+                            }
+                        }
+                    });
+
+                    // Double-tap to reset to default (mobile-friendly)
+                    let lastTap = 0;
+                    knob.addEventListener('touchend', (e) => {
+                        const currentTime = new Date().getTime();
+                        const tapLength = currentTime - lastTap;
+
+                        if (tapLength < 300 && tapLength > 0) {
+                            // Double tap detected - reset to default value
+                            const defaultValue = parseFloat(knob.dataset.value);
+                            this.updateParameter(param, defaultValue);
+
+                            const rotation = ((defaultValue - min) / (max - min)) * 270 - 135;
+                            knob.style.transform = `rotate(${rotation}deg)`;
+
+                            // Haptic feedback for reset
+                            if (navigator.vibrate) {
+                                navigator.vibrate([10, 50, 10]);
+                            }
+
+                            // Visual feedback
+                            knob.style.transition = 'transform 0.3s ease';
+                            setTimeout(() => {
+                                knob.style.transition = '';
+                            }, 300);
+                        }
+
+                        lastTap = currentTime;
                     });
                 });
             }
