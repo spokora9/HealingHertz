@@ -578,6 +578,217 @@
                 var(--shadow-glow);
         }
 
+        /* Modern Faders */
+        .fader-container {
+            width: 60px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .modern-fader {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 8px;
+            background: linear-gradient(to right, var(--bg-tertiary), var(--accent-primary));
+            border-radius: 4px;
+            outline: none;
+            transform: rotate(-90deg);
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .modern-fader::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .modern-fader::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .modern-fader::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.6);
+        }
+
+        .modern-fader::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.6);
+        }
+
+        .modern-fader:active::-webkit-slider-thumb {
+            transform: scale(1.1);
+        }
+
+        .modern-fader:active::-moz-range-thumb {
+            transform: scale(1.1);
+        }
+
+        /* Material Presets */
+        .material-presets {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .preset-btn {
+            padding: 10px 12px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            white-space: nowrap;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .preset-btn:active {
+            transform: translateY(0);
+        }
+
+        .preset-btn.active {
+            background: var(--accent-gradient);
+            border-color: var(--accent-primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Continuous Toggle */
+        .continuous-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Preset Sessions */
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .preset-session-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            min-height: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preset-session-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .preset-session-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+        }
+
+        .preset-session-btn:hover::before {
+            opacity: 0.1;
+        }
+
+        .preset-session-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .preset-icon {
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .preset-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .preset-duration {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .preset-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 640px) {
+            .preset-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preset-session-btn {
+                min-height: 120px;
+            }
+        }
+
         .control-value {
             font-size: 0.75rem;
             font-weight: 600;
@@ -1692,6 +1903,14 @@
                         <span class="control-icon">🧠</span>
                         <span class="toggle-label">Binaural</span>
                     </div>
+                    <div class="continuous-toggle">
+                        <span class="control-icon">🔔</span>
+                        <div class="toggle-switch" id="continuousToggle">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span class="control-icon">🎵</span>
+                        <span class="toggle-label">Continuous</span>
+                    </div>
                 </div>
                 <div class="binaural-pattern-selector" id="binauralPatternSelector" style="display: none;">
                     <select id="globalBinauralPattern" onchange="updateGlobalBinauralPattern()">
@@ -1718,22 +1937,33 @@
                 <div class="resonance-grid">
                     <div class="control-group">
                         <label class="control-label">Resonance Time</label>
-                        <div class="modern-knob" data-param="resonanceTime" data-min="1" data-max="15" data-value="8"></div>
+                        <div class="fader-container">
+                            <input type="range" class="modern-fader" id="resonanceTimeFader" data-param="resonanceTime" min="1" max="15" value="8" orient="vertical">
+                        </div>
                         <div class="control-value" id="resonanceTimeValue">8s</div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Harmonic Decay</label>
-                        <div class="modern-knob" data-param="harmonicDecay" data-min="0" data-max="100" data-value="65"></div>
+                        <div class="fader-container">
+                            <input type="range" class="modern-fader" id="harmonicDecayFader" data-param="harmonicDecay" min="0" max="100" value="65" orient="vertical">
+                        </div>
                         <div class="control-value" id="harmonicDecayValue">65%</div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label">Material Type</label>
-                        <div class="modern-knob" data-param="material" data-min="0" data-max="100" data-value="45"></div>
-                        <div class="control-value" id="materialValue">45%</div>
+                        <label class="control-label">Material</label>
+                        <div class="material-presets">
+                            <button class="preset-btn" data-material="bronze" data-value="20">🔔 Bronze</button>
+                            <button class="preset-btn active" data-material="crystal" data-value="45">💎 Crystal</button>
+                            <button class="preset-btn" data-material="tibetan" data-value="65">🙏 Tibetan</button>
+                            <button class="preset-btn" data-material="steel" data-value="85">⚙️ Steel</button>
+                        </div>
+                        <div class="control-value" id="materialValue">Crystal</div>
                     </div>
                     <div class="control-group">
                         <label class="control-label">Strike Force</label>
-                        <div class="modern-knob" data-param="strikeForce" data-min="0" data-max="100" data-value="50"></div>
+                        <div class="fader-container">
+                            <input type="range" class="modern-fader" id="strikeForceFader" data-param="strikeForce" min="0" max="100" value="50" orient="vertical">
+                        </div>
                         <div class="control-value" id="strikeForceValue">50%</div>
                     </div>
                 </div>
@@ -1816,6 +2046,39 @@
                         </label>
                         <input type="range" class="modern-slider" id="bellVolume" min="0" max="100" value="35">
                     </div>
+                </div>
+            </div>
+
+            <div class="glass-panel preset-sequences-panel">
+                <div class="panel-header">
+                    <div class="panel-icon">✨</div>
+                    <h3 class="panel-title">Guided Sessions</h3>
+                </div>
+                <div class="preset-grid">
+                    <button class="preset-session-btn" data-preset="chakra-7min">
+                        <span class="preset-icon">🌈</span>
+                        <span class="preset-title">Chakra Balance</span>
+                        <span class="preset-duration">7 minutes</span>
+                        <span class="preset-desc">All 7 chakras • 1 min each</span>
+                    </button>
+                    <button class="preset-session-btn" data-preset="meditation-10min">
+                        <span class="preset-icon">🧘</span>
+                        <span class="preset-title">Deep Meditation</span>
+                        <span class="preset-duration">10 minutes</span>
+                        <span class="preset-desc">Focus • Clarity • Calm</span>
+                    </button>
+                    <button class="preset-session-btn" data-preset="tibetan-7min">
+                        <span class="preset-icon">🔔</span>
+                        <span class="preset-title">Tibetan Bowls</span>
+                        <span class="preset-duration">7 minutes</span>
+                        <span class="preset-desc">Traditional • 1 min per bowl</span>
+                    </button>
+                    <button class="preset-session-btn" data-preset="solfeggio-9min">
+                        <span class="preset-icon">🎵</span>
+                        <span class="preset-title">Solfeggio Journey</span>
+                        <span class="preset-duration">9 minutes</span>
+                        <span class="preset-desc">All 9 frequencies • Healing</span>
+                    </button>
                 </div>
             </div>
 
@@ -3694,7 +3957,7 @@ Keyboard Shortcuts:
             attachFrequencyListeners() {
                 document.querySelectorAll('.freq-button').forEach(btn => {
                     // Main button click (play frequency)
-                    btn.addEventListener('click', (e) => {
+                    btn.addEventListener('click', async (e) => {
                         if (e.target.classList.contains('freq-add-btn') || e.target.classList.contains('freq-delete-btn')) return;
 
                         const frequency = parseFloat(btn.dataset.freq);
@@ -3702,6 +3965,11 @@ Keyboard Shortcuts:
                         if (btn.classList.contains('active')) {
                             bellEngine.stopFrequency(frequency);
                             btn.classList.remove('active');
+
+                            // Remove from continuous tracking if in continuous mode
+                            if (window.continuousModeEnabled && window.activeContinuousTones) {
+                                window.activeContinuousTones.delete(frequency);
+                            }
                         } else {
                             // Check if we're in binaural mode and on binaural library
                             if (binauralSystem.enabled && this.currentLibrary === 'binaural') {
@@ -3714,9 +3982,25 @@ Keyboard Shortcuts:
                                 // Update status display
                                 window.updateBinauralStatus();
                             } else {
-                                // Regular frequency play (with binaural if enabled)
-                                bellEngine.playAdvancedBell(frequency);
-                                btn.classList.add('active');
+                                // Check if continuous mode is enabled
+                                if (window.continuousModeEnabled) {
+                                    // Play sustained tone (continuous until stopped)
+                                    await bellEngine.playAdvancedBellSustained(frequency, 999999); // Very long duration
+                                    btn.classList.add('active');
+
+                                    // Track in continuous tones map
+                                    if (!window.activeContinuousTones) {
+                                        window.activeContinuousTones = new Map();
+                                    }
+                                    window.activeContinuousTones.set(frequency, {
+                                        frequency,
+                                        startTime: Date.now()
+                                    });
+                                } else {
+                                    // Regular frequency play (with binaural if enabled)
+                                    bellEngine.playAdvancedBell(frequency);
+                                    btn.classList.add('active');
+                                }
                             }
                         }
 
@@ -3981,13 +4265,72 @@ Keyboard Shortcuts:
             }
 
             initInterface() {
-                this.initKnobControls();
+                this.initFaderControls();
                 this.initSliderControls();
                 this.initVisualizationTabs();
                 this.initTransportControls();
+                this.initMaterialPresets();
+            }
+
+            initFaderControls() {
+                // Replace knob controls with fader controls
+                document.querySelectorAll('.modern-fader').forEach(fader => {
+                    const param = fader.dataset.param;
+
+                    fader.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        this.updateParameter(param, value);
+
+                        // Haptic feedback on mobile
+                        if (navigator.vibrate) {
+                            navigator.vibrate(5);
+                        }
+                    });
+
+                    // Touch-friendly: add visual feedback
+                    fader.addEventListener('touchstart', () => {
+                        fader.style.opacity = '1';
+                        if (navigator.vibrate) {
+                            navigator.vibrate(10);
+                        }
+                    });
+
+                    fader.addEventListener('touchend', () => {
+                        fader.style.opacity = '0.9';
+                    });
+                });
+            }
+
+            initMaterialPresets() {
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Remove active from all
+                        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+
+                        // Add active to clicked
+                        btn.classList.add('active');
+
+                        // Get material value
+                        const value = parseFloat(btn.dataset.value);
+                        const materialName = btn.dataset.material;
+
+                        // Update parameter
+                        this.updateParameter('material', value);
+
+                        // Update display
+                        const materialLabel = materialName.charAt(0).toUpperCase() + materialName.slice(1);
+                        document.getElementById('materialValue').textContent = materialLabel;
+
+                        // Haptic feedback
+                        if (navigator.vibrate) {
+                            navigator.vibrate([10, 50, 10]);
+                        }
+                    });
+                });
             }
 
             initKnobControls() {
+                // Kept for backwards compatibility, but now using faders
                 document.querySelectorAll('.modern-knob').forEach(knob => {
                     let isDragging = false;
                     let startY = 0;
@@ -4857,6 +5200,10 @@ Keyboard Shortcuts:
         const sequencer = new BellSequencer();
         const frequencyLibrary = new FrequencyLibrary();
 
+        // Global continuous mode variables
+        window.continuousModeEnabled = false;
+        window.activeContinuousTones = new Map();
+
         // Define global functions first
         window.updateBinauralStatus = function() {
             const binauralStatus = document.getElementById('binauralStatus');
@@ -4959,6 +5306,147 @@ Keyboard Shortcuts:
             const savedPattern = localStorage.getItem('bell-audio-global-pattern') || 'focus';
             globalPatternSelect.value = savedPattern;
             window.updateGlobalBinauralPattern();
+
+            // Continuous mode toggle for individual bell sounds
+            const continuousToggle = document.getElementById('continuousToggle');
+
+            continuousToggle.addEventListener('click', () => {
+                window.continuousModeEnabled = !window.continuousModeEnabled;
+                if (window.continuousModeEnabled) {
+                    continuousToggle.classList.add('active');
+                    localStorage.setItem('bell-audio-continuous', 'true');
+                } else {
+                    continuousToggle.classList.remove('active');
+                    localStorage.setItem('bell-audio-continuous', 'false');
+                    // Stop all continuous tones
+                    window.activeContinuousTones.forEach((data, frequency) => {
+                        bellEngine.stopFrequency(frequency);
+                    });
+                    window.activeContinuousTones.clear();
+
+                    // Clear active buttons
+                    document.querySelectorAll('.freq-button.active').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                }
+            });
+
+            // Load saved continuous mode
+            const savedContinuousMode = localStorage.getItem('bell-audio-continuous') === 'true';
+            if (savedContinuousMode) {
+                window.continuousModeEnabled = true;
+                continuousToggle.classList.add('active');
+            }
+
+            // Preset session loaders
+            document.querySelectorAll('.preset-session-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const preset = btn.dataset.preset;
+
+                    // Clear existing sequence
+                    sequencer.sequence = [];
+                    sequencer.updateSequenceDisplay();
+
+                    // Load preset based on type
+                    if (preset === 'chakra-7min') {
+                        // 7 Chakras - 1 minute each
+                        const chakras = [
+                            { freq: 396, label: 'Root Chakra' },
+                            { freq: 417, label: 'Sacral Chakra' },
+                            { freq: 528, label: 'Solar Plexus' },
+                            { freq: 639, label: 'Heart Chakra' },
+                            { freq: 741, label: 'Throat Chakra' },
+                            { freq: 852, label: 'Third Eye' },
+                            { freq: 963, label: 'Crown Chakra' }
+                        ];
+
+                        sequencer.setDurationMode('bowl');
+                        sequencer.updateGlobalDuration(60); // 60 seconds per chakra
+                        sequencer.setSustainMode('continuous'); // Singing bowl style
+
+                        chakras.forEach(chakra => {
+                            sequencer.addFrequency(chakra.freq, chakra.label);
+                        });
+
+                    } else if (preset === 'meditation-10min') {
+                        // 10-minute meditation focused on clarity, focus, and calm
+                        const meditation = [
+                            { freq: 528, label: 'DNA Repair', duration: 120 }, // 2 min
+                            { freq: 432, label: 'Universal Harmony', duration: 180 }, // 3 min
+                            { freq: 639, label: 'Heart Connection', duration: 120 }, // 2 min
+                            { freq: 741, label: 'Intuition', duration: 120 }, // 2 min
+                            { freq: 852, label: 'Spiritual Awakening', duration: 60 } // 1 min
+                        ];
+
+                        sequencer.setDurationMode('bowl');
+                        sequencer.setSustainMode('continuous');
+
+                        meditation.forEach(item => {
+                            sequencer.addFrequency(item.freq, item.label);
+                            // Set individual duration
+                            const addedItem = sequencer.sequence[sequencer.sequence.length - 1];
+                            addedItem.duration = item.duration;
+                            addedItem.isManuallyEdited = true;
+                        });
+
+                    } else if (preset === 'tibetan-7min') {
+                        // Tibetan singing bowls - 1 minute per bowl
+                        const bowls = [
+                            { freq: 256, label: 'C Bowl' },
+                            { freq: 288, label: 'D Bowl' },
+                            { freq: 320, label: 'E Bowl' },
+                            { freq: 341, label: 'F Bowl' },
+                            { freq: 384, label: 'G Bowl' },
+                            { freq: 426, label: 'A Bowl' },
+                            { freq: 480, label: 'B Bowl' }
+                        ];
+
+                        sequencer.setDurationMode('bowl');
+                        sequencer.updateGlobalDuration(60);
+                        sequencer.setSustainMode('continuous');
+
+                        bowls.forEach(bowl => {
+                            sequencer.addFrequency(bowl.freq, bowl.label);
+                        });
+
+                    } else if (preset === 'solfeggio-9min') {
+                        // All 9 Solfeggio frequencies - 1 minute each
+                        const solfeggio = [
+                            { freq: 174, label: 'Pain Relief' },
+                            { freq: 285, label: 'Tissue Healing' },
+                            { freq: 396, label: 'Liberation' },
+                            { freq: 417, label: 'Change' },
+                            { freq: 528, label: 'Miracles' },
+                            { freq: 639, label: 'Connection' },
+                            { freq: 741, label: 'Awakening' },
+                            { freq: 852, label: 'Intuition' },
+                            { freq: 963, label: 'Divine' }
+                        ];
+
+                        sequencer.setDurationMode('bowl');
+                        sequencer.updateGlobalDuration(60);
+                        sequencer.setSustainMode('natural');
+
+                        solfeggio.forEach(freq => {
+                            sequencer.addFrequency(freq.freq, freq.label);
+                        });
+                    }
+
+                    // Haptic feedback
+                    if (navigator.vibrate) {
+                        navigator.vibrate([20, 10, 20, 10, 20]);
+                    }
+
+                    // Visual feedback
+                    btn.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        btn.style.transform = '';
+                    }, 200);
+
+                    // Scroll to sequencer
+                    document.querySelector('.sequencer-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+            });
 
             // Duration mode toggle
             document.querySelectorAll('[data-duration-mode]').forEach(btn => {
