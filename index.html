@@ -789,6 +789,284 @@
             }
         }
 
+        /* ==================== MOBILE APP LAYOUT ==================== */
+
+        /* Remove desktop grid */
+        .main-grid {
+            display: none;
+        }
+
+        /* Mobile App Container */
+        .mobile-app {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        /* Mobile App Header */
+        .mobile-header {
+            padding: max(12px, env(safe-area-inset-top)) 16px 12px 16px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .mobile-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
+
+        .header-btn:active {
+            transform: scale(0.9);
+        }
+
+        .header-btn.active {
+            background: var(--accent-gradient);
+            border-color: var(--accent-primary);
+        }
+
+        /* Screens Container */
+        .screens-container {
+            flex: 1;
+            display: flex;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            position: relative;
+            touch-action: pan-y;
+        }
+
+        .screens-wrapper {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .screen {
+            width: 33.333%;
+            height: 100%;
+            flex-shrink: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px 16px calc(80px + env(safe-area-inset-bottom)) 16px;
+        }
+
+        .screen-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .screen-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: calc(60px + env(safe-area-inset-bottom));
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            position: relative;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 3px;
+            background: var(--accent-gradient);
+            border-radius: 0 0 3px 3px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .nav-item.active::before {
+            opacity: 1;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active .nav-label {
+            color: var(--accent-primary);
+        }
+
+        /* Section Card */
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .section-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Hide old desktop elements on mobile */
+        @media (max-width: 768px) {
+            .header {
+                display: none;
+            }
+
+            .main-grid {
+                display: none;
+            }
+        }
+
+        /* Show desktop on larger screens */
+        @media (min-width: 769px) {
+            .mobile-app {
+                display: none;
+            }
+        }
+
+        /* Transport Controls Mobile */
+        .transport-controls-mobile {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        /* Sequence List Mobile */
+        .sequence-list-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 16px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sequence-item-mobile {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sequence-item-info {
+            flex: 1;
+        }
+
+        .sequence-item-freq {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .sequence-item-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .sequence-item-duration {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Timeline Mobile */
+        .timeline-container-mobile {
+            margin-top: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 12px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .timeline-container-mobile canvas {
+            display: block;
+            width: 100%;
+            height: 60px;
+        }
+
+        /* ==================== END MOBILE APP LAYOUT ==================== */
+
         .control-value {
             font-size: 0.75rem;
             font-weight: 600;
@@ -1883,6 +2161,188 @@
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
+    <!-- Mobile App Layout -->
+    <div class="mobile-app" id="mobile-app">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <h1>🔔 Bell Audio</h1>
+            <div class="header-actions">
+                <button class="header-btn" id="mobileThemeToggle" title="Toggle theme">🌙</button>
+                <button class="header-btn" id="mobileBinauralToggle" title="Toggle binaural">🎧</button>
+                <button class="header-btn" id="mobileContinuousToggle" title="Toggle continuous">🔔</button>
+            </div>
+        </div>
+
+        <!-- Screens Container -->
+        <div class="screens-container" id="screensContainer">
+            <div class="screens-wrapper" id="screensWrapper">
+
+                <!-- Screen 1: Bell Shaper -->
+                <div class="screen" id="screen1">
+                    <h2 class="screen-title">Bell Shaper</h2>
+                    <p class="screen-subtitle">Shape your perfect bell sound</p>
+
+                    <!-- Resonance Controls -->
+                    <div class="section-card">
+                        <div class="section-card-title">⚡ Resonance</div>
+                        <div class="control-group">
+                            <label class="control-label">Resonance Time</label>
+                            <div class="fader-container">
+                                <input type="range" class="modern-fader" id="mobileResonanceTimeFader" data-param="resonanceTime" min="1" max="15" value="8" orient="vertical">
+                            </div>
+                            <div class="control-value" id="mobileResonanceTimeValue">8s</div>
+                        </div>
+                    </div>
+
+                    <!-- Harmonic Controls -->
+                    <div class="section-card">
+                        <div class="section-card-title">🎵 Harmonics</div>
+                        <div class="control-group">
+                            <label class="control-label">Harmonic Decay</label>
+                            <div class="fader-container">
+                                <input type="range" class="modern-fader" id="mobileHarmonicDecayFader" data-param="harmonicDecay" min="0" max="100" value="65" orient="vertical">
+                            </div>
+                            <div class="control-value" id="mobileHarmonicDecayValue">65%</div>
+                        </div>
+                    </div>
+
+                    <!-- Material Presets -->
+                    <div class="section-card">
+                        <div class="section-card-title">🔔 Material</div>
+                        <div class="material-presets">
+                            <button class="preset-btn" data-material="bronze" data-value="20">🔔 Bronze</button>
+                            <button class="preset-btn active" data-material="crystal" data-value="45">💎 Crystal</button>
+                            <button class="preset-btn" data-material="tibetan" data-value="65">🙏 Tibetan</button>
+                            <button class="preset-btn" data-material="steel" data-value="85">⚙️ Steel</button>
+                        </div>
+                        <div class="control-value" id="mobileMaterialValue">Crystal</div>
+                    </div>
+
+                    <!-- Strike Force -->
+                    <div class="section-card">
+                        <div class="section-card-title">💥 Strike Force</div>
+                        <div class="control-group">
+                            <label class="control-label">Impact Intensity</label>
+                            <div class="fader-container">
+                                <input type="range" class="modern-fader" id="mobileStrikeForceFader" data-param="strikeForce" min="0" max="100" value="50" orient="vertical">
+                            </div>
+                            <div class="control-value" id="mobileStrikeForceValue">50%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 2: Sounds & Presets -->
+                <div class="screen" id="screen2">
+                    <h2 class="screen-title">Sounds</h2>
+                    <p class="screen-subtitle">Play frequencies & create presets</p>
+
+                    <!-- Library Selector -->
+                    <div class="section-card">
+                        <div class="section-card-title">📚 Libraries</div>
+                        <div class="library-tabs" id="mobileLibraryTabs">
+                            <button class="library-tab active" data-library="solfeggio">🎼 Solfeggio</button>
+                            <button class="library-tab" data-library="chakras">🧘 Chakras</button>
+                            <button class="library-tab" data-library="tibetan">🔔 Tibetan</button>
+                            <button class="library-tab" data-library="research">🔬 Research</button>
+                        </div>
+                    </div>
+
+                    <!-- Frequency Grid -->
+                    <div class="section-card">
+                        <div class="section-card-title">🎹 Frequencies</div>
+                        <div class="frequency-grid" id="mobileFrequencyGrid">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Custom Frequency Creator -->
+                    <div class="section-card">
+                        <div class="section-card-title">➕ Custom Frequency</div>
+                        <div class="creator-inputs">
+                            <input type="number" class="creator-input" id="mobileCustomFrequency" placeholder="Frequency (Hz)" min="20" max="20000" step="0.01">
+                            <input type="text" class="creator-input" id="mobileCustomLabel" placeholder="Label">
+                            <button class="creator-button" id="mobileAddCustomBtn">Add Frequency</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screen 3: Guided Sessions -->
+                <div class="screen" id="screen3">
+                    <h2 class="screen-title">Guided Sessions</h2>
+                    <p class="screen-subtitle">Professional meditation sequences</p>
+
+                    <!-- Preset Sessions -->
+                    <div class="preset-grid">
+                        <button class="preset-session-btn" data-preset="chakra-7min">
+                            <span class="preset-icon">🌈</span>
+                            <span class="preset-title">Chakra Balance</span>
+                            <span class="preset-duration">7 minutes</span>
+                            <span class="preset-desc">All 7 chakras • 1 min each</span>
+                        </button>
+                        <button class="preset-session-btn" data-preset="meditation-10min">
+                            <span class="preset-icon">🧘</span>
+                            <span class="preset-title">Deep Meditation</span>
+                            <span class="preset-duration">10 minutes</span>
+                            <span class="preset-desc">Focus • Clarity • Calm</span>
+                        </button>
+                        <button class="preset-session-btn" data-preset="tibetan-7min">
+                            <span class="preset-icon">🔔</span>
+                            <span class="preset-title">Tibetan Bowls</span>
+                            <span class="preset-duration">7 minutes</span>
+                            <span class="preset-desc">Traditional • 1 min per bowl</span>
+                        </button>
+                        <button class="preset-session-btn" data-preset="solfeggio-9min">
+                            <span class="preset-icon">🎵</span>
+                            <span class="preset-title">Solfeggio Journey</span>
+                            <span class="preset-duration">9 minutes</span>
+                            <span class="preset-desc">All 9 frequencies • Healing</span>
+                        </button>
+                    </div>
+
+                    <!-- Sequencer Section (shown when preset selected) -->
+                    <div class="section-card" id="mobileSequencerCard" style="display: none;">
+                        <div class="section-card-title">🎼 Sequence Player</div>
+
+                        <!-- Transport Controls -->
+                        <div class="transport-controls-mobile">
+                            <button class="transport-button" id="mobilePlayBtn" title="Play">▶</button>
+                            <button class="transport-button" id="mobilePauseBtn" title="Pause">⏸</button>
+                            <button class="transport-button" id="mobileStopBtn" title="Stop">⏹</button>
+                        </div>
+
+                        <!-- Sequence Items -->
+                        <div class="sequence-list-mobile" id="mobileSequenceList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+
+                        <!-- Timeline -->
+                        <div class="timeline-container-mobile">
+                            <canvas id="mobileTimelineCanvas" width="800" height="60"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-screen="0">
+                <div class="nav-icon">⚙️</div>
+                <div class="nav-label">Shaper</div>
+            </div>
+            <div class="nav-item" data-screen="1">
+                <div class="nav-icon">🎵</div>
+                <div class="nav-label">Sounds</div>
+            </div>
+            <div class="nav-item" data-screen="2">
+                <div class="nav-icon">✨</div>
+                <div class="nav-label">Sessions</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop Layout (kept for larger screens) -->
     <div class="app-container" id="main-content" role="main">
         <header class="header">
             <div class="header-controls">
@@ -5204,6 +5664,127 @@ Keyboard Shortcuts:
         window.continuousModeEnabled = false;
         window.activeContinuousTones = new Map();
 
+        // Mobile App Screen Manager
+        class MobileScreenManager {
+            constructor() {
+                this.currentScreen = 0;
+                this.totalScreens = 3;
+                this.screensWrapper = document.getElementById('screensWrapper');
+                this.navItems = document.querySelectorAll('.nav-item');
+                this.startX = 0;
+                this.currentX = 0;
+                this.isDragging = false;
+
+                this.init();
+            }
+
+            init() {
+                // Navigation click handlers
+                this.navItems.forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        this.goToScreen(index);
+                    });
+                });
+
+                // Touch swipe handlers
+                const container = document.getElementById('screensContainer');
+                container.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+                container.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+                container.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+
+                // Show current screen
+                this.updateScreen();
+            }
+
+            handleTouchStart(e) {
+                this.startX = e.touches[0].clientX;
+                this.isDragging = true;
+            }
+
+            handleTouchMove(e) {
+                if (!this.isDragging) return;
+
+                this.currentX = e.touches[0].clientX;
+                const diff = this.currentX - this.startX;
+
+                // Prevent default if swiping horizontally
+                if (Math.abs(diff) > 10) {
+                    e.preventDefault();
+                }
+            }
+
+            handleTouchEnd(e) {
+                if (!this.isDragging) return;
+
+                const diff = this.startX - this.currentX;
+                const threshold = 50;
+
+                if (Math.abs(diff) > threshold) {
+                    if (diff > 0 && this.currentScreen < this.totalScreens - 1) {
+                        // Swipe left - next screen
+                        this.goToScreen(this.currentScreen + 1);
+                    } else if (diff < 0 && this.currentScreen > 0) {
+                        // Swipe right - previous screen
+                        this.goToScreen(this.currentScreen - 1);
+                    }
+                }
+
+                this.isDragging = false;
+            }
+
+            goToScreen(index) {
+                if (index < 0 || index >= this.totalScreens) return;
+
+                this.currentScreen = index;
+                this.updateScreen();
+
+                // Haptic feedback
+                if (navigator.vibrate) {
+                    navigator.vibrate(10);
+                }
+            }
+
+            updateScreen() {
+                // Update transform
+                const offset = -this.currentScreen * 100;
+                this.screensWrapper.style.transform = `translateX(${offset}%)`;
+
+                // Update navigation
+                this.navItems.forEach((item, index) => {
+                    if (index === this.currentScreen) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+
+                // If on screen 2 (sounds), initialize frequency library
+                if (this.currentScreen === 1 && !this.frequencyLibraryInitialized) {
+                    this.initializeFrequencyLibrary();
+                    this.frequencyLibraryInitialized = true;
+                }
+            }
+
+            initializeFrequencyLibrary() {
+                // Copy frequency library to mobile grid
+                const mobileGrid = document.getElementById('mobileFrequencyGrid');
+                const desktopGrid = document.querySelector('.frequency-grid');
+
+                if (desktopGrid && mobileGrid) {
+                    mobileGrid.innerHTML = desktopGrid.innerHTML;
+
+                    // Re-attach event listeners
+                    frequencyLibrary.attachFrequencyListeners();
+                }
+            }
+        }
+
+        // Initialize mobile app if on mobile
+        let mobileScreenManager;
+        if (window.innerWidth <= 768) {
+            mobileScreenManager = new MobileScreenManager();
+        }
+
         // Define global functions first
         window.updateBinauralStatus = function() {
             const binauralStatus = document.getElementById('binauralStatus');
@@ -5252,6 +5833,217 @@ Keyboard Shortcuts:
 
         // Initialize sequencer controls
         document.addEventListener('DOMContentLoaded', () => {
+            // ==================== MOBILE APP INITIALIZATION ====================
+            if (window.innerWidth <= 768) {
+                // Mobile header buttons
+                const mobileThemeToggle = document.getElementById('mobileThemeToggle');
+                const mobileBinauralToggle = document.getElementById('mobileBinauralToggle');
+                const mobileContinuousToggle = document.getElementById('mobileContinuousToggle');
+                const body = document.body;
+
+                // Theme toggle
+                const savedTheme = localStorage.getItem('bell-audio-theme') || 'dark';
+                if (savedTheme === 'light') {
+                    body.setAttribute('data-theme', 'light');
+                    mobileThemeToggle.textContent = '☀️';
+                    mobileThemeToggle.classList.add('active');
+                }
+
+                mobileThemeToggle.addEventListener('click', () => {
+                    const isLight = body.getAttribute('data-theme') === 'light';
+                    if (isLight) {
+                        body.removeAttribute('data-theme');
+                        mobileThemeToggle.textContent = '🌙';
+                        mobileThemeToggle.classList.remove('active');
+                        localStorage.setItem('bell-audio-theme', 'dark');
+                    } else {
+                        body.setAttribute('data-theme', 'light');
+                        mobileThemeToggle.textContent = '☀️';
+                        mobileThemeToggle.classList.add('active');
+                        localStorage.setItem('bell-audio-theme', 'light');
+                    }
+                });
+
+                // Binaural toggle
+                const savedBinauralMode = localStorage.getItem('bell-audio-binaural') === 'true';
+                if (savedBinauralMode) {
+                    binauralSystem.enabled = true;
+                    mobileBinauralToggle.classList.add('active');
+                }
+
+                mobileBinauralToggle.addEventListener('click', () => {
+                    binauralSystem.enabled = !binauralSystem.enabled;
+                    if (binauralSystem.enabled) {
+                        mobileBinauralToggle.classList.add('active');
+                        localStorage.setItem('bell-audio-binaural', 'true');
+                    } else {
+                        mobileBinauralToggle.classList.remove('active');
+                        localStorage.setItem('bell-audio-binaural', 'false');
+                    }
+                });
+
+                // Continuous toggle
+                const savedContinuousMode = localStorage.getItem('bell-audio-continuous') === 'true';
+                if (savedContinuousMode) {
+                    window.continuousModeEnabled = true;
+                    mobileContinuousToggle.classList.add('active');
+                }
+
+                mobileContinuousToggle.addEventListener('click', () => {
+                    window.continuousModeEnabled = !window.continuousModeEnabled;
+                    if (window.continuousModeEnabled) {
+                        mobileContinuousToggle.classList.add('active');
+                        localStorage.setItem('bell-audio-continuous', 'true');
+                    } else {
+                        mobileContinuousToggle.classList.remove('active');
+                        localStorage.setItem('bell-audio-continuous', 'false');
+                        // Stop all continuous tones
+                        window.activeContinuousTones.forEach((data, frequency) => {
+                            bellEngine.stopFrequency(frequency);
+                        });
+                        window.activeContinuousTones.clear();
+                        document.querySelectorAll('.freq-button.active').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                    }
+                });
+
+                // Mobile faders
+                document.querySelectorAll('.modern-fader').forEach(fader => {
+                    const param = fader.dataset.param;
+
+                    fader.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        bellEngine.updateParameter(param, value);
+
+                        // Update corresponding value display
+                        const valueId = fader.id.replace('Fader', 'Value');
+                        const valueDisplay = document.getElementById(valueId);
+
+                        if (valueDisplay) {
+                            if (param === 'resonanceTime') {
+                                valueDisplay.textContent = value + 's';
+                            } else {
+                                valueDisplay.textContent = value + '%';
+                            }
+                        }
+
+                        // Haptic feedback
+                        if (navigator.vibrate) {
+                            navigator.vibrate(5);
+                        }
+                    });
+                });
+
+                // Mobile material presets
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+
+                        const value = parseFloat(btn.dataset.value);
+                        const materialName = btn.dataset.material;
+
+                        bellEngine.updateParameter('material', value);
+
+                        const materialLabel = materialName.charAt(0).toUpperCase() + materialName.slice(1);
+                        const mobileValue = document.getElementById('mobileMaterialValue');
+                        if (mobileValue) mobileValue.textContent = materialLabel;
+
+                        if (navigator.vibrate) {
+                            navigator.vibrate([10, 50, 10]);
+                        }
+                    });
+                });
+
+                // Mobile library tabs
+                document.querySelectorAll('#mobileLibraryTabs .library-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('#mobileLibraryTabs .library-tab').forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+
+                        const library = tab.dataset.library;
+                        frequencyLibrary.switchLibrary(library);
+
+                        // Update mobile grid
+                        const mobileGrid = document.getElementById('mobileFrequencyGrid');
+                        const desktopGrid = document.querySelector('.frequency-grid');
+                        if (desktopGrid && mobileGrid) {
+                            mobileGrid.innerHTML = desktopGrid.innerHTML;
+                            frequencyLibrary.attachFrequencyListeners();
+                        }
+                    });
+                });
+
+                // Mobile custom frequency
+                const mobileAddCustomBtn = document.getElementById('mobileAddCustomBtn');
+                if (mobileAddCustomBtn) {
+                    mobileAddCustomBtn.addEventListener('click', () => {
+                        const freqInput = document.getElementById('mobileCustomFrequency');
+                        const labelInput = document.getElementById('mobileCustomLabel');
+
+                        const frequency = parseFloat(freqInput.value);
+                        const label = labelInput.value || `${frequency} Hz`;
+
+                        if (frequency && frequency >= 20 && frequency <= 20000) {
+                            frequencyLibrary.addCustomFrequency(frequency, label);
+
+                            // Update mobile grid
+                            const mobileGrid = document.getElementById('mobileFrequencyGrid');
+                            const desktopGrid = document.querySelector('.frequency-grid');
+                            if (desktopGrid && mobileGrid) {
+                                mobileGrid.innerHTML = desktopGrid.innerHTML;
+                                frequencyLibrary.attachFrequencyListeners();
+                            }
+
+                            freqInput.value = '';
+                            labelInput.value = '';
+
+                            if (navigator.vibrate) {
+                                navigator.vibrate([20, 10, 20]);
+                            }
+                        }
+                    });
+                }
+
+                // Mobile transport controls
+                const mobilePlayBtn = document.getElementById('mobilePlayBtn');
+                const mobilePauseBtn = document.getElementById('mobilePauseBtn');
+                const mobileStopBtn = document.getElementById('mobileStopBtn');
+
+                if (mobilePlayBtn) {
+                    mobilePlayBtn.addEventListener('click', () => {
+                        sequencer.playSequence();
+                        mobilePlayBtn.classList.add('active');
+                    });
+                }
+
+                if (mobilePauseBtn) {
+                    mobilePauseBtn.addEventListener('click', () => {
+                        sequencer.pauseSequence();
+                        mobilePauseBtn.classList.toggle('active');
+                    });
+                }
+
+                if (mobileStopBtn) {
+                    mobileStopBtn.addEventListener('click', () => {
+                        sequencer.stopSequence();
+                        mobilePlayBtn.classList.remove('active');
+                        mobilePauseBtn.classList.remove('active');
+                    });
+                }
+
+                // Initialize frequency library on mobile
+                setTimeout(() => {
+                    const mobileGrid = document.getElementById('mobileFrequencyGrid');
+                    const desktopGrid = document.querySelector('.frequency-grid');
+                    if (desktopGrid && mobileGrid) {
+                        mobileGrid.innerHTML = desktopGrid.innerHTML;
+                    }
+                }, 100);
+            }
+            // ==================== END MOBILE APP INITIALIZATION ====================
+
             // Theme toggle functionality
             const themeToggle = document.getElementById('themeToggle');
             const body = document.body;
@@ -5443,8 +6235,41 @@ Keyboard Shortcuts:
                         btn.style.transform = '';
                     }, 200);
 
-                    // Scroll to sequencer
-                    document.querySelector('.sequencer-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    // Show mobile sequencer card and update
+                    if (window.innerWidth <= 768) {
+                        const mobileSequencerCard = document.getElementById('mobileSequencerCard');
+                        const mobileSequenceList = document.getElementById('mobileSequenceList');
+
+                        if (mobileSequencerCard) {
+                            mobileSequencerCard.style.display = 'block';
+
+                            // Update mobile sequence list
+                            if (mobileSequenceList) {
+                                mobileSequenceList.innerHTML = '';
+                                sequencer.sequence.forEach(item => {
+                                    const itemEl = document.createElement('div');
+                                    itemEl.className = 'sequence-item-mobile';
+                                    itemEl.innerHTML = `
+                                        <div class="sequence-item-info">
+                                            <div class="sequence-item-freq">${item.frequency} Hz</div>
+                                            <div class="sequence-item-label">${item.label}</div>
+                                        </div>
+                                        <div class="sequence-item-duration">${item.duration}s</div>
+                                    `;
+                                    mobileSequenceList.appendChild(itemEl);
+                                });
+                            }
+
+                            // Scroll to sequencer card
+                            mobileSequencerCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    } else {
+                        // Desktop: scroll to sequencer panel
+                        const sequencerPanel = document.querySelector('.sequencer-panel');
+                        if (sequencerPanel) {
+                            sequencerPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }
                 });
             });
 
